@@ -1,0 +1,31 @@
+unit FileStorageFileOperations;
+
+interface
+uses IFileOperations;
+type
+FileStorageFileOperation=class(TInterfacedObject,IFileOperation)
+procedure write(filename:String;text:string;mode:string='REWRITE');
+end;
+implementation
+
+procedure FileStorageFileOperation.write(filename:String;text:string;mode:string='REWRITE');
+var f:textfile;
+begin   //http://www.swissdelphicenter.ch/torry/showcode.php?id=176
+AssignFile(f, filename); {Assigns the Filename}
+if(mode='REWRITE')then
+begin
+
+  ReWrite(f); {Create a new file named ek.txt}
+  Writeln(f, text);
+  end
+  else
+  begin
+      //showmessage('Fehler');
+  end;
+  Closefile(f);
+
+end;
+
+
+
+end.

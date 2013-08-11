@@ -1,0 +1,27 @@
+unit Collection_Global_conversion_property_definitions;
+
+
+interface
+uses Windows, Messages, SysUtils, Classes, Graphics,Controls, Forms, Dialogs,
+  StdCtrls,ConversionPropertyDefinitions_u;
+type
+
+global_conversion_property_definitions=class
+
+constructor Create(ConversionPropertyDefinitions:ConversionPropertyDefinitions);
+
+
+end;
+implementation
+constructor global_conversion_property_definitions.Create(ConversionPropertyDefinitions:ConversionPropertyDefinitions);
+var c:ConversionPropertyDefinitions;
+begin
+c.add('CSS',c.langTypeBuilder('width','width','','','convert_px_sizeto_percentWidth'));  //short variable name syntax
+c.add('CSS',c.langTypeBuilder('height','height','','','convert_px_sizeto_percentHeight'));
+c.add('CSS',c.langTypeBuilder('top','top','','','convert_px_sizeto_percentHeight'));
+c.add('CSS',c.langTypeBuilder('left','left','','','convert_px_sizeto_percentWidth'));
+
+
+end;
+end.
+ 

@@ -1,0 +1,112 @@
+unit DragDropComponents;
+
+interface
+uses    //Die DragDrop implementation war von nem youtube video auf spanisch(nein,spanisch kann ich net,hab einfachauf den code geguckt),der rest selber
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, StdCtrls, Buttons;
+  type
+  DragDropComponent=class
+   procedure fDragDropMoverY(obj:TObject;Y:integer);
+   procedure fDragDropMoverX(obj:TObject;X:integer);
+   procedure fMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+  procedure fMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+  procedure fMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+
+  public
+  component_references:TObject;
+  DragDropMode:string;testbtn:TButton;
+  end;
+var
+P1:TPoint;
+Move:boolean;
+
+implementation
+procedure DragDropComponent.fDragDropMoverY(obj:TObject;Y:integer);
+begin
+
+ //if(Move=true)then
+//begin
+
+if(Y>P1.y)then
+       obj.top:=obj.top +(Y - P1.y);
+if(Y<P1.y)then
+        obj.top:=obj.top-(P1.y-Y);
+
+  // end;
+end;
+procedure DragDropComponent.fDragDropMoverX(obj:TObject;X:integer);
+begin
+
+// if(Move=true)then
+//begin
+if(X> P1.x)then
+      obj.left:=obj.left+(X-P1.x);
+if(X<P1.x)then
+       obj.Left:=obj.left-(P1.x-X);
+
+ //  end;
+end;
+procedure DragDropComponent.fMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  Move:=false;
+end;
+
+procedure DragDropComponent.fMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+Move:=true;
+P1.x:=X;
+P1.y:=Y;
+end;
+
+procedure DragDropComponent.fMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+  var buffer_val1,buffer_val2:integer;
+begin
+
+if(Move=true)then
+begin
+
+  begin
+
+  if(DragDropMode='all')then
+  begin
+       fDragDropmoverY(component_references,Y);
+       fDragDropmoverX(component_references,X);
+   end
+   else if(DragDropMode='x')then
+   begin
+       fDragDropmoverX(component_references,X);
+   end
+   else if(DragDropMode='y')then
+   begin
+
+   // testbtn.height:=testbtn.height+(Y-P1.y);
+       //buffer_val1:=component_references.top +(Y - P1.y);
+       //buffer_val2:=testbtn.height+(Y-P1.y);
+
+       //testsweise
+       fDragDropMoverY(component_references,Y);
+       testbtn.top:=component_references.top-testbtn.height;
+          //geht nur für den einen shape
+
+
+
+   end
+   else
+   begin
+   showmessage('Fehler im Programm-du kannst nix machen---du bist....-matchtlos');
+
+
+
+
+end;
+end;
+end;
+end;
+end.
+

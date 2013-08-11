@@ -1,0 +1,282 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls,TypINfo,DragDropComponents,Math,FileStorageFileOperations,Collection_LangConvertFunctions,IFileOperations,
+  Collection_Global_conversion_property_definitions;
+
+type
+LangConvertFunction = function(value:string;lang_name:string;component_name:string):String
+                         of object;//http://www.delphi-central.com/callback.aspx
+
+FinishWebTypes=record
+CSS:string;
+HTML:string;
+end;
+    PreparedHTMLCSSJS=record
+    html_attrs:array of string;
+    css_values:array of string;
+    js_values:array of string;
+    html_available:boolean;
+    css_available:boolean;
+    js_available:boolean;
+    end;
+
+  TForm1 = class(TForm)
+    Button1: TButton;
+    Button2: TButton; //the only purpose of this function is using it as asrgument,no contents
+
+    procedure Button1Click(Sender: TObject);
+    procedure createbutton(default_values:array of string);
+    procedure createcomponent(typ:string;defaultvalues:array of string);
+    procedure FormCreate(Sender: TObject);
+    function createhtml(component_reference:TObject):PreparedHTMLCSSJS;
+    function finish_html(component:TObject;prepared:PreparedHTMLCSSJS;cssid:string;innercontent:string=''):FinishWebTypes;
+    procedure Button2Click(Sender: TObject);
+    function LangConvertFunction_Proxy(FunctionName:string;value:string;lang_name:string;component_name:string):string;
+
+  private
+    { Private-Deklarationen }
+  public
+    { Public-Deklarationen }
+  end;
+
+var
+
+  Form1: TForm1;
+
+  all_created_components:array of TObject;
+  FileOperationsInstance:IFileOperation;
+  LangConvertFunctionsInstance:LangConvertFunctions;
+  global_conversion_property_definitionsInstance:global_conversion_property_definitions;
+  ConversionPropertyDefinition:ConversionPropertyDefinitions;
+  nl:String;
+implementation
+
+{$R *.DFM}
+
+function TForm1.LangConvertFunction_Proxy(FunctionName:string;value:string;lang_name:string;component_name:string):string;
+var m: TMethod;//http://stackoverflow.com/questions/4186458/delphi-call-a-function-whose-name-is-stored-in-a-string
+begin
+m.Code := LangConvertFunctions.MethodAddress(FunctionName); //find method code  //TODO(sebb):Convert into a reusable function with x.methodadress with x as argument(Tclass?,tobject?)
+  m.Data := pointer(Self); //store pointer to object instance
+  Result := LangConvertFunction(m)(value,lang_name,component_name);
+end;
+function zahlgerade(zahl:integer):boolean;
+begin
+if(zahl mod 2=0)then//http://phpforum.de/archiv_38399_ungerade@oder@gerade@Zahl@feststellen_anzeigen.html
+begin
+result:=true;
+end
+else
+begin
+result:=false;
+end;
+end;
+
+procedure TForm1.createbutton(default_values:array of string);
+var button:Tbutton;i:integer;current_eigenschaft:string;PropInfo: PPropInfo;fc:DragDropComponent;
+begin
+button:=tbutton.create(self);
+button.parent:=form1;
+ setlength(all_created_components,length(all_created_components)+1);
+ all_created_components[length(all_created_components)-1]:=button;
+                     //Drag-Drop speizifischer(spezific)Code
+                     fc:=DragDropComponent.create(button);
+                        fc.setmaxmin(200,10,200,10);
+                               form1.doublebuffered:=true;
+                            // DragDropBase.Create(button);
+                           fc.DragDropMode:='all';
+                           button.OnMouseDown:=fc.fMouseDown;
+                          button.OnMouseMove:=fc.fMouseMove;
+                          button.OnMouseUp:=fc.fMouseUp;
+for i:=0 to length(default_values)-1 do
+begin
+if not(zahlgerade(i))then
+begin
+//wert=wert z.b. 512
+  PropInfo := GetPropInfo(button.ClassInfo, current_eigenschaft);
+  SetOrdProp(button, PropInfo, strtoint(default_values[i]));// showmessage('set');
+  current_eigenschaft:='';
+end
+else
+begin
+//gerade,also wert=eigenschaft z.b. width
+current_eigenschaft:=default_values[i];
+end;
+end;
+
+end;
+
+procedure TForm1.createcomponent(typ:string;defaultvalues:array of string);
+begin
+if(typ='button')then
+begin
+createbutton(defaultvalues);
+
+end;
+
+end;
+function gethtmlname_for(component_reference:TObject):string;
+begin
+if(component_reference.ClassName='TButton')then
+result:='button';                                           //Vuuuurschicht:kein begin,end
+
+end;
+
+
+function TForm1.createhtml(component_reference:TObject):PreparedHTMLCSSJS;
+var i,i2:integer;html,css,js:array of string;langbuffer:string;delphi_value:string;PropInfo: PPropInfo;html_name:string;returnlinker:PreparedHTMLCSSJS;
+begin
+//TODO(sebastiaan):js support
+  returnlinker.html_available:=false;returnlinker.css_available:=false;returnlinker.js_available:=false;
+//mit component_reference.ClassName gibts den KlassenNamen
+ //html_name:=gethtmlname_for(component_reference);
+
+for i:=0 to length(global_conversion_property_definitionsInstance.eigenschaften)-1 do
+begin
+
+for i2:=0 to length(global_conversion_property_definitionsInstance.eigenschaften[i])-1 do
+begin
+if(global_conversion_property_definitionsInstance.eigenschaften[i][i2].available)then   //if i2=0 ->html   i2=1-> css   TODO():i2=2->js
+begin
+//falls verfügbar
+//main code
+//hier spielt sich alles ab
+
+
+propInfo := GetPropInfo(component_reference.ClassInfo,global_conversion_property_definitionsInstance.eigenschaften[i][i2].component_name);
+delphi_value := VarToStr(GetPropValue(component_reference, PropInfo^.Name));
+if not(global_conversion_property_definitionsInstance.eigenschaften[i][i2].convert_function='')then //checke ob callback function in real existiert . real madrid
+begin
+delphi_value:=LangConvertFunction_Proxy(global_conversion_property_definitionsInstance.eigenschaften[i][i2].convert_function,delphi_value,global_conversion_property_definitionsInstance.eigenschaften[i][i2].lang_name,global_conversion_property_definitionsInstance.eigenschaften[i][i2].component_name);
+
+end;
+
+//das  statement hiervon: http://www.swissdelphicenter.ch/torry/showcode.php?id=1084
+if(i2=0)then
+begin
+//html case
+langbuffer:=global_conversion_property_definitionsInstance.eigenschaften[i][i2].lang_name+'="'+global_conversion_property_definitionsInstance.eigenschaften[i][i2].lang_prefix+delphi_value+global_conversion_property_definitionsInstance.eigenschaften[i][i2].lang_suffix;
+setlength(returnlinker.html_attrs,length(returnlinker.html_attrs)+1);
+returnlinker.html_attrs[length(returnlinker.html_attrs)-1]:=langbuffer;
+returnlinker.html_available:=true;
+end
+else if(i2=1)then
+begin
+//css case
+  returnlinker.css_available:=true;
+langbuffer:=global_conversion_property_definitionsInstance.eigenschaften[i][i2].lang_name+':'+global_conversion_property_definitionsInstance.eigenschaften[i][i2].lang_prefix+delphi_value+global_conversion_property_definitionsInstance.eigenschaften[i][i2].lang_suffix;
+
+ setlength(returnlinker.css_values,length(returnlinker.css_values)+1);
+returnlinker.css_values[length(returnlinker.css_values)-1]:=langbuffer;
+end
+else
+begin
+showmessage('Fehler im Programm');
+end;
+
+end;
+end;
+
+end;
+
+result:=returnlinker;
+end;
+
+
+
+
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+createcomponent('button',['width','40','height','40','top','150','left','150']);
+
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var lang:Langtype;
+begin
+nl:=#13#10;
+FileOperationsInstance:=FileStorageFileOperation.Create();
+LangConvertFunctionsInstance:=LangConvertFunctions.Create(Form1.clientHeight,Form1.clientWidth);
+global_conversion_property_definitionsInstance:=global_conversion_property_definitions.Create();
+ConversionPropertyDefinition:=ConversionPropertyDefinitions.Create();
+//create
+
+end;
+
+function TFOrm1.finish_html(component:TObject;prepared:PreparedHTMLCSSJS;cssid:string;innercontent:string=''):FinishWebTypes;
+var i:integer;html_name:string;html,css:string;res:FinishWebTypes;
+begin
+   html_name:=gethtmlname_for(component);
+   html:='<'+html_name;
+
+    html:=html+' '+'id="'+cssid+'"';
+   if(prepared.html_available)then
+   begin
+   for i:=0 to length(prepared.html_attrs)-1 do
+   begin
+   html:=html+' '+prepared.html_attrs[i];
+   end;
+   end; //nach css muss nicht gecheckt werden,da vorhanden
+  html:=html+'>'+innercontent+'</'+html_name+'>';
+  //css
+  css:='#'+cssid+' {';
+
+  for i:=0 to length(prepared.css_values)-1 do
+  begin
+   css:=css+prepared.css_values[i];
+   if not(i=length(prepared.css_values)-1)then
+   begin
+    css:=css+';';
+   end;
+  end;
+  css:=css+';position:absolute';
+     css:=css+'}';
+
+     //showmessage(html+css);
+   //result:=html;
+   res.CSS:=css;
+   res.HTML:=html;
+   result:=res;
+end;
+function createhtmlpage(langtypes:FinishWebTypes):string;
+var html:string;
+begin
+         //http://board.gulli.com/thread/113456-zeilenumbruch-in-delphi/
+//crlf:=#13#10;
+html:='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+html:=html+nl+'<html xmlns="http://www.w3.org/1999/xhtml">';//Quelle:dreamweaver, ich gluab mit dem neuten HTML5 !doctype gehts einfacher
+                                                                                      //aber keinen suppport für ie6 und co.
+html:=html+nl+'<head>';
+
+//css
+html:=html+nl+'<style>';
+html:=html+nl+langtypes.CSS;
+html:=html+nl+'</style>';
+
+//end head
+html:=html+nl+'</head>';
+
+html:=html+nl+'<body>';
+//html added
+html:=html+nl+langtypes.HTML;
+//end
+html:=html+nl+'</body>'+nl+'</html>';
+result:=html;
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+var preparedhtml:PreparedHTMLCSSJS;langf:FinishWebTypes;
+begin
+
+preparedhtml:=createhtml(all_created_components[0]);
+langf:=finish_html(all_created_components[0],preparedhtml,'fcs');
+FileOperationsInstance.write('test.html',createhtmlpage(langf));
+
+end;
+
+end.

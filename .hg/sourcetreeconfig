@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<RepositoryCustomSettings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <LastUsedView>Log</LastUsedView>
+  <AutoRefresh>true</AutoRefresh>
+  <LogBranchFilterIndex>0</LogBranchFilterIndex>
+  <SidebarExpandedItems>
+    <string>File Status</string>
+    <string>Branches</string>
+    <string>Tags</string>
+    <string>Tags/tip</string>
+    <string>Remotes</string>
+    <string>Remotes/github-2023</string>
+  </SidebarExpandedItems>
+  <SidebarWidth>140</SidebarWidth>
+  <AutoRefreshRemotes>true</AutoRefreshRemotes>
+  <LastCheckedRemotes>2013-06-28T20:45:20.90705+02:00</LastCheckedRemotes>
+  <IncomingSavedCount>0</IncomingSavedCount>
+  <OutgoingSavedCount>0</OutgoingSavedCount>
+</RepositoryCustomSettings>

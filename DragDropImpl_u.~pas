@@ -1,0 +1,12 @@
+unit DragDropImpl_u;
+
+interface
+type
+DragDropImpl=class
+
+
+
+end;
+implementation
+
+end.

@@ -1,0 +1,57 @@
+unit Collection_LangConvertFunctions;
+
+interface
+uses Math;
+type
+GUIValue=record
+clientHeight:integer;
+clientWidth:integer;
+end;
+
+
+LangConvertFunctions=class
+ published function convert_px_sizeto_percentHeight(value:string;lang_name:string;component_name:string):String;
+   published function convert_px_sizeto_percentWidth(value:string;lang_name:string;component_name:string):String;
+   function convertpercent(total:integer;current:integer):double;
+   constructor Create(clHeight:integer;clWidth:integer);
+   private
+   GUIValues:GUIValue;
+end;
+implementation
+constructor LangConvertFunctions.Create(clHeight:integer;clWidth:integer);
+begin
+
+GUIValues.clientHeight:=clHeight;
+GUIValues.clientWidth:=clWidth;
+end;
+function LangConvertFunctions.convertpercent(total:integer;current:integer):double;
+var calc_percent:double;
+begin
+  calc_percent:= current / (total / 100);  //http://www.delphipraxis.net/129444-wie-auf-x-nachkommastellen-runden.html
+   calc_percent:=Round(calc_percent * IntPower(10, 0)) / IntPower(10, 0); //http://www.hashbangcode.com/blog/get-percentage-number-php-172.html
+result:=calc_percent;
+end;
+
+function LangConvertFunctions.convert_px_sizeto_percentWidth(value:string;lang_name:string;component_name:string):String;
+var clWidth,pxvalue:integer;calc_percent:double;res_value:string;
+begin
+clWidth:=GUIValues.clientWidth;
+pxvalue:=strtoint(value); //showmessage(value);
+calc_percent:=convertpercent(clWidth,pxvalue);
+res_value:=floattostr(calc_percent);
+result:=res_value+'%';
+end;
+
+function LangConvertFunctions.convert_px_sizeto_percentHeight(value:string;lang_name:string;component_name:string):String;
+var clHeight,pxvalue,comma_pos:integer;convertbuffer,res_value,int_buffer,prefix:string;calc_percent:double;cp:string;
+begin
+clHeight:=GUIValues.clientHeight; //TODO(sebbbb):Am besten wäre es das basevalue als Objekt zu machen->copy von form1,aber ressourcenlastig
+pxvalue:=strtoint(value);
+  calc_percent:=convertpercent(clHeight,pxvalue);  //eigene Impl verworfen,da zu fehleranfällig
+
+res_value:=floattostr(calc_percent);
+result:=res_value+'%';
+end;
+
+end.
+ 
