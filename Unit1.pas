@@ -55,7 +55,7 @@ end;
     procedure add_controls_bar_item(component:TComponentClass;desc:string;call_function:string='');
     procedure Button1Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
-
+    function render_finish_html():string;
 
 
   private
@@ -181,6 +181,7 @@ else if(i2=1)then
 begin
 //css case
   returnlinker.css_available:=true;
+  //showmessage(c.properties[i][i2].lang_name+'-----'+c.properties[i][i2].lang_suffix);
 langbuffer:=c.properties[i][i2].lang_name+':'+c.properties[i][i2].lang_prefix+delphi_value+c.properties[i][i2].lang_suffix;
 
  setlength(returnlinker.css_values,length(returnlinker.css_values)+1);
@@ -375,7 +376,7 @@ html:=html+nl+'</body>'+nl+'</html>';
 result:=html;
 end;
 
-procedure TForm1.Button2Click(Sender: TObject);
+function TForm1.render_finish_html():string;
 var preparedhtml:PreparedHTMLCSSJS;langf:array of FinishWebTypes;i:integer;btn:Tbutton;
 begin
 for i:=0 to length(ConversionManagerInstance.store[strtoint(ConversionManagerInstance.storeHelperInstance.handler_getkey('created_components'))])-1 do
@@ -385,12 +386,17 @@ setlength(langf,length(langf)+1);
 langf[length(langf)-1]:=finish_html(ConversionManagerInstance.store[strtoint(ConversionManagerInstance.storeHelperInstance.handler_getkey('created_components'))][i],preparedhtml,'editor_'+inttostr(i));
 end;
 
+result:=createhtmlpage(langf);
+end;
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+
 
  SaveDialog1.FileName:='Website.html';//http://www.delphibasics.co.uk/RTL.asp?Name=TSaveDialog
 if(SaveDialog1.Execute)then
 begin
 fcs:=savedialog1.filename;
-FileOperationsInstance.write(savedialog1.filename,createhtmlpage(langf));
+FileOperationsInstance.write(savedialog1.filename,render_finish_html());
 end;
 
 
@@ -488,7 +494,8 @@ end;
 procedure TForm1.Button1Click(Sender: TObject);
 begin
 Chromium1.Visible:=true;
-chromium1.Load('file://'+fcs);
+FileOperationsInstance.write('__Website.html',render_finish_html());
+chromium1.Load('file://'+getcurrentdir+'/__Website.html');
 button1.Visible:=false;
 button4.Visible:=true;
 end;

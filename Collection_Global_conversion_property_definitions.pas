@@ -21,9 +21,9 @@ c.add('CSS',c.langTypeBuilder('height','height','','','convert_px_sizeto_percent
 c.add('CSS',c.langTypeBuilder('top','top','','','convert_px_sizeto_percentHeight'));
 c.add('CSS',c.langTypeBuilder('left','left','','','convert_px_sizeto_percentWidth'));
 c.add('CSS',c.langTypeBuilder('Font.size','font-size','px'));
-c.add('CSS',c.langTypeBuilder('Font.Color','font-color','','','convert_color'));
+c.add('CSS',c.langTypeBuilder('Font.Color','color','','','convert_color'));
 c.add('HTML',c.langTypeBuilder('link','href'));
-//c.add('CSS',c.langTypeBuilder('Color','color','','','convert_color'));
+
 c.add('HTML_INNER_VAR',c.langTypeBuilder('Caption',''));
 c.add('HTML_INNER_VAR',c.langTypeBuilder('Text',''));
 

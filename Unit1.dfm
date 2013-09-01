@@ -1,8 +1,8 @@
 object Form1: TForm1
-  Left = 261
-  Top = 310
-  Width = 1137
-  Height = 783
+  Left = 108
+  Top = 217
+  Width = 1074
+  Height = 716
   Caption = '2023'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -15,8 +15,8 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object Button2: TButton
-    Left = 848
-    Top = 208
+    Left = 864
+    Top = 104
     Width = 193
     Height = 65
     Caption = 'Website erstellen'
@@ -31,8 +31,8 @@ object Form1: TForm1
     TabOrder = 1
   end
   object Button3: TButton
-    Left = 848
-    Top = 320
+    Left = 864
+    Top = 192
     Width = 193
     Height = 65
     Caption = 'einlesen'
@@ -40,16 +40,16 @@ object Form1: TForm1
     OnClick = Button3Click
   end
   object ScrollBox2: TScrollBox
-    Left = 32
+    Left = 8
     Top = 104
     Width = 225
     Height = 369
     TabOrder = 3
   end
   object Chromium1: TChromium
-    Left = 272
+    Left = 256
     Top = 104
-    Width = 569
+    Width = 585
     Height = 569
     DefaultUrl = 'about:blank'
     TabOrder = 4

@@ -558,7 +558,14 @@ else if(type_='Integer')then
 begin
   if not(value='')then
   begin
+  if(value[length(value)]='p')then//sehr schlecht
+  begin
+  delete(value,length(value),length(value));
+  end;
+
+
   SetOrdProp(component_reference,Propinfo,strtoint(value));
+
   end;
 end
 else if(type_='TCaption')then

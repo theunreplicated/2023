@@ -36,7 +36,8 @@ implementation
 function ConversionPropertyDefinitions.langTypeBuilder(componentName:string='';langName:string='';suffix:string='';prefix:string='';convert_function:string=''):LangType;
 var lang:LangType;i:integer;langSuffix,langPrefix,buffered_addtional:string;
 begin
-
+langSuffix:=suffix;
+langPrefix:=prefix;
 lang.convert_function:=convert_function;
 lang.available:=true;
 lang.component_name:=componentName;
